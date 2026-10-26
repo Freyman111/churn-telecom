@@ -1,0 +1,5 @@
+metodo_pago,clientes,tasa_cancelacion_pct
+Cheque electrónico,2511,34.49
+Efectivo,1099,25.84
+Transferencia bancaria,1718,25.09
+Tarjeta de crédito,1672,24.52

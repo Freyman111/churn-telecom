@@ -1,0 +1,11 @@
+tipo_contrato,servicio_internet,metodo_pago,clientes,tasa_cancelacion_pct
+Mensual,Fibra óptica,Cheque electrónico,597,57.79
+Mensual,Fibra óptica,Transferencia bancaria,379,46.44
+Mensual,Fibra óptica,Tarjeta de crédito,379,46.17
+Mensual,Fibra óptica,Efectivo,243,42.8
+Mensual,DSL,Cheque electrónico,485,37.53
+Anual,Fibra óptica,Cheque electrónico,267,35.96
+Mensual,Ninguno,Cheque electrónico,302,33.44
+Mensual,DSL,Efectivo,218,29.36
+Anual,Fibra óptica,Efectivo,120,27.5
+Mensual,DSL,Tarjeta de crédito,310,27.42

@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dashboard de cancelación de clientes</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+  body { font-family: system-ui, sans-serif; background: #f3f4f6; margin: 0; padding: 24px; color: #111827; }
+  h1 { margin: 0 0 4px; font-size: 22px; }
+  .sub { color: #6b7280; margin: 0 0 20px; }
+  .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 16px; }
+  .kpi, .card { background: #fff; border-radius: 10px; padding: 16px; box-shadow: 0 1px 2px rgba(0,0,0,.06); }
+  .kpi .valor { font-size: 26px; font-weight: 700; }
+  .kpi .etiqueta { color: #6b7280; font-size: 13px; }
+  .graficos { display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 12px; }
+  .card h2 { font-size: 15px; margin: 0 0 8px; }
+  footer { color: #9ca3af; font-size: 12px; margin-top: 16px; }
+</style>
+</head>
+<body>
+<h1>¿Por qué cancelan los clientes?</h1>
+<p class="sub">Análisis de churn · datos sintéticos de telecomunicaciones</p>
+
+<div class="kpis">
+  <div class="kpi"><div class="valor" id="kpi-total"></div><div class="etiqueta">Clientes totales</div></div>
+  <div class="kpi"><div class="valor" id="kpi-cancelados"></div><div class="etiqueta">Clientes cancelados</div></div>
+  <div class="kpi"><div class="valor" id="kpi-tasa"></div><div class="etiqueta">Tasa de cancelación</div></div>
+  <div class="kpi"><div class="valor" id="kpi-ingreso"></div><div class="etiqueta">Ingreso mensual perdido</div></div>
+</div>
+
+<div class="graficos">
+  <div class="card"><h2>Tasa de cancelación por contrato</h2><canvas id="g-contrato"></canvas></div>
+  <div class="card"><h2>Tasa de cancelación por servicio</h2><canvas id="g-servicio"></canvas></div>
+  <div class="card"><h2>Tasa de cancelación según antigüedad</h2><canvas id="g-antiguedad"></canvas></div>
+  <div class="card"><h2>Tasa de cancelación por método de pago</h2><canvas id="g-metodo"></canvas></div>
+  <div class="card"><h2>Ingreso mensual perdido por servicio (USD)</h2><canvas id="g-ingreso"></canvas></div>
+</div>
+
+<footer>Generado con src/dashboard.py a partir de data/processed/resultados/</footer>
+
+<script>
+const D = {"kpis": {"total": 7000, "cancelados": 1991, "tasa": 28.44, "ingreso": 135002.48}, "graficos": {"contrato": {"labels": ["Mensual", "Anual", "Bienal"], "values": [37.92, 20.68, 11.89]}, "servicio": {"labels": ["Fibra óptica", "DSL", "Ninguno"], "values": [38.22, 22.52, 19.75]}, "antiguedad": {"labels": ["0-12 meses", "13-24 meses", "25-48 meses", "49+ meses"], "values": [42.13, 33.99, 26.61, 20.5]}, "metodo": {"labels": ["Cheque electrónico", "Efectivo", "Transferencia bancaria", "Tarjeta de crédito"], "values": [34.49, 25.84, 25.09, 24.52]}, "ingreso": {"labels": ["Fibra óptica", "DSL", "Ninguno"], "values": [95681.41, 31533.18, 7787.89]}}};
+
+const pct = v => v.toFixed(1) + '%';
+const usd = v => '$' + Math.round(v).toLocaleString('es-CO');
+
+document.getElementById('kpi-total').textContent = D.kpis.total.toLocaleString('es-CO');
+document.getElementById('kpi-cancelados').textContent = D.kpis.cancelados.toLocaleString('es-CO');
+document.getElementById('kpi-tasa').textContent = pct(D.kpis.tasa);
+document.getElementById('kpi-ingreso').textContent = usd(D.kpis.ingreso);
+
+function barras(id, grafico, formato) {
+  const maximo = Math.max(...grafico.values);
+  new Chart(document.getElementById(id), {
+    type: 'bar',
+    data: {
+      labels: grafico.labels,
+      datasets: [{
+        data: grafico.values,
+        backgroundColor: grafico.values.map(v => v === maximo ? '#DC2626' : '#9CA3AF')
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: { label: c => formato(c.raw) } }
+      },
+      scales: { x: { ticks: { callback: v => formato(v) } } }
+    }
+  });
+}
+
+barras('g-contrato', D.graficos.contrato, pct);
+barras('g-servicio', D.graficos.servicio, pct);
+barras('g-antiguedad', D.graficos.antiguedad, pct);
+barras('g-metodo', D.graficos.metodo, pct);
+barras('g-ingreso', D.graficos.ingreso, usd);
+</script>
+</body>
+</html>
